@@ -4,12 +4,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
 public class Carteirinha {
+	
 	private String matricula;
 	private Date dataExpedicao;
 	private Date dataVencimento;
@@ -33,6 +35,7 @@ public class Carteirinha {
 	}
  
 	@Id
+	@Column(length=10)
 	public String getMatricula() {
 		return matricula;
 	}

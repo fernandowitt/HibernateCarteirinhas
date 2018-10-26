@@ -7,13 +7,13 @@
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 		<properties>
             <property name="hibernate.archive.autodetection" value="class" />
-            <property name="hibernate.dialect" value="org.hibernate.dialect.SQLiteDialect" />
-            <property name="hibernate.connection.driver_class" value="org.sqlite.JDBC" />
-            <property name="hibernate.connection.username" value="" />
-            <property name="hibernate.connection.password" value="" />
-            <property name="hibernate.connection.user" value="" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
+            <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
+            <property name="hibernate.connection.username" value="root" />
+            <property name="hibernate.connection.password" value="root" />
+            <property name="hibernate.connection.user" value="root" />
             <property name="hibernate.connection.autocommit" value="true"/>
-            <property name="hibernate.connection.url" value="jdbc:sqlite:sqlite.db"/>
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost/carteirinhas"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.flushMode" value="ALWAYS" />
             <property name="hibernate.cache.use_second_level_cache" value="false" />

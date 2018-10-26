@@ -1,26 +1,63 @@
 package br.edu.ifsc.carteirinhas.entidades;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
+import javax.imageio.ImageIO;
 import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
+
+import br.edu.ifsc.carteirinhas.webcam.Webcam;
+import br.edu.ifsc.carteirinhas.webcam.WebcamController;
+
+
 @Entity
 public class Aluno{
+	
 	private String cpf;
 	private String nome;
-	@Basic
-	@Temporal(TemporalType.DATE)
 	private Date dataNascimento;
+	private byte[] foto;
 	
 	public Aluno() {}
 
-	public Aluno(String cpf, String nome, String data) throws ParseException {
+	public Aluno(String cpf, String nome, String data, String enderecoFoto) throws ParseException, IOException {
+		super();
+		this.cpf = cpf;
+		this.nome = nome;
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		this.dataNascimento = (Date)formatter.parse(data);
+		
+		File inputFile = new File(enderecoFoto);
+		FileInputStream inputStream = new FileInputStream(inputFile);
+		byte[] fileBytes = new byte[(int) inputFile.length()];
+		inputStream.read(fileBytes);
+		inputStream.close();
+		
+		this.foto = fileBytes;
+	}
+	
+	public Aluno(String cpf, String nome, String data) throws ParseException, IOException {
 		super();
 		this.cpf = cpf;
 		this.nome = nome;
@@ -29,6 +66,7 @@ public class Aluno{
 	}
 
 	@Id
+	@Column(length=11)
 	public String getCpf() {
 		return cpf;
 	}
@@ -45,6 +83,9 @@ public class Aluno{
 		this.nome = nome;
 	}
 
+
+	@Basic
+	@Temporal(TemporalType.DATE)
 	public Date getDataNascimento() {
 		return dataNascimento;
 	}
@@ -53,44 +94,37 @@ public class Aluno{
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		this.dataNascimento = (Date)formatter.parse(data);
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((cpf == null) ? 0 : cpf.hashCode());
-		result = prime * result + ((dataNascimento == null) ? 0 : dataNascimento.hashCode());
-		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Aluno other = (Aluno) obj;
-		if (cpf == null) {
-			if (other.cpf != null)
-				return false;
-		} else if (!cpf.equals(other.cpf))
-			return false;
-		if (dataNascimento == null) {
-			if (other.dataNascimento != null)
-				return false;
-		} else if (!dataNascimento.equals(other.dataNascimento))
-			return false;
-		if (nome == null) {
-			if (other.nome != null)
-				return false;
-		} else if (!nome.equals(other.nome))
-			return false;
-		return true;
+	
+	@Lob
+	@Column(columnDefinition="longblob")
+	public byte[] getFoto() {
+		return foto;
 	}
 	
-	
+	public void setFoto(String enderecoFoto) throws IOException {
+		File inputFile = new File(enderecoFoto);
+		FileInputStream inputStream = new FileInputStream(inputFile);
+		byte[] fileBytes = new byte[(int) inputFile.length()];
+		inputStream.read(fileBytes);
+		inputStream.close();
+		
+		this.foto = fileBytes;
+	}
+
+	public void setFoto() throws IOException{
+		Thread thread1 = new Thread(Webcam.wcam);
+		thread1.run();
+		
+		Thread thread2 = new Thread(WebcamController.wcamController);
+		thread2.run();
+		synchronized(Webcam.wcam) {
+			try {
+				thread2.wait();
+			}catch(InterruptedException e){
+				e.printStackTrace();
+			}
+		}
+		
+	}
 	
 }

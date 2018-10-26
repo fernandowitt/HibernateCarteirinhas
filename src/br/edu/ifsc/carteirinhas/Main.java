@@ -1,20 +1,24 @@
 package br.edu.ifsc.carteirinhas;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import br.edu.ifsc.carteirinhas.database.*;
 import br.edu.ifsc.carteirinhas.entidades.*;
+import br.edu.ifsc.carteirinhas.webcam.*;
 
 public class Main {
 
-	public static void main(String[] args) throws ParseException {	
+	public static void main(String[] args) throws ParseException, IOException {	
 		//Persistence.createEntityManagerFactory("HibernateCarteirinhasPU");
 		DB.connection.addAluno(new Aluno("10101010101", "Fernando Corrêa Witt", "22-10-1999"));
+		DB.connection.getAluno("10101010101").setFoto(/*"/home/estagiario/eclipse-workspace/HibernateCarteirinhas/test.png"*/);
 		DB.connection.addAluno(new Aluno("10134010101", "Fernando Corrêa Witt", "22-10-1999"));
 		DB.connection.addCurso(new Curso(224466, "Análise e Desenvolvimento de Sistemas", "02-02-2017", 4,"22-12-2019"));
 		DB.connection.addCurso(new Curso(246810, "Análise e Desenvolvimento de Sistemas", "02-02-2018", 2,"22-12-2020"));
 		DB.connection.addCarteirinha(new Carteirinha("1710030002", "02-02-2017", "22-12-2019", 1, DB.connection.getAluno("10101010101"), DB.connection.getCurso(224466)));
+		
 		
 		//test//
 		
